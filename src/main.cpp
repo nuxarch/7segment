@@ -1,31 +1,35 @@
 #include <Arduino.h>
+#include "seven_segment.h"
+seven_segment mysegmen;
+seven_segment mysegmen2;
+#define PIN_D1 13
+#define PIN_D0 12
 
-uint8_t number[10]={
-0x03,
-0x9F,
-0x25,
-0x0D,
-0x99,
-0x49,
-0x41,
-0x1F,
-0x01,
-0x09
-};
+int data = 15;
 
-void setup() {
-  // atur semua port D sbgai output
-  DDRD = 0xFF;
-  //matikan segment
-  PORTD = 0xFF;
+// number 00 sd 99 ex 19
+void update(uint8_t number){
+ // step 1  
+  number = number /10;
+  digitalWrite(PIN_D1, HIGH); // D1 on
+  PORTD = mysegmen.number[number];
+  delay(10);
+  digitalWrite(PIN_D1, LOW); // D1 off
 
+  digitalWrite(PIN_D0, HIGH); // D0 on
+  PORTD = mysegmen.number[9];
+  delay(10);
+  digitalWrite(PIN_D0, LOW); // D0 off
 }
 
-void loop() {
-  // count up
-  for (int i = 0; i < 10; i++)
-  {
-    PORTD = number[i];delay(200);
-  }
-  
+void setup()
+{
+  mysegmen.begin(CC_SEGMENT);
+  mysegmen2.begin(CA_SEGMENT);
+  pinMode(PIN_D1, OUTPUT);
+  pinMode(PIN_D0, OUTPUT);
+}
+void loop()
+{
+  update(45);
 }
